@@ -28,6 +28,7 @@
 ToolManager::ToolManager()
 {
     active_tool = 0;
+    next_tool = 0;
     current_tool_name = CHECKSUM("hotend");
 }
 
@@ -46,25 +47,33 @@ void ToolManager::on_gcode_received(void *argument)
     if( gcode->has_letter('T') ) {
         int new_tool = gcode->get_value('T');
         if(new_tool >= (int)this->tools.size() || new_tool < 0) {
-            // invalid tool
-            char buf[32]; // should be big enough for any status
-            int n = snprintf(buf, sizeof(buf), "T%d invalid tool ", new_tool);
-            gcode->txt_after_ok.append(buf, n);
+			// invalid tool
+			char buf[32]; // should be big enough for any status
+			int n = snprintf(buf, sizeof(buf), "T%d invalid tool ", new_tool);
+			gcode->txt_after_ok.append(buf, n);
+		}else{
+			this->next_tool=new_tool;
+		}
+    }
+    if (gcode->has_m && gcode->m==6) {
+    	if(this->next_tool >= (int)this->tools.size() || this->next_tool < 0) {
+			// invalid tool
+			char buf[32]; // should be big enough for any status
+			int n = snprintf(buf, sizeof(buf), "T%d invalid tool ", this->next_tool);
+			gcode->txt_after_ok.append(buf, n);
 
-        } else {
-            if(new_tool != this->active_tool) {
-                // We must wait for an empty queue before we can disable the current extruder
-                THEKERNEL->conveyor->wait_for_idle();
-                this->tools[active_tool]->deselect();
-                this->active_tool = new_tool;
-                this->current_tool_name = this->tools[active_tool]->get_name();
-                this->tools[active_tool]->select();
+		}else if (this->next_tool != this->active_tool) {
+			// We must wait for an empty queue before we can disable the current tool
+			THEKERNEL->conveyor->wait_for_idle();
+			this->tools[active_tool]->deselect();
+			this->active_tool = this->next_tool;
+			this->current_tool_name = this->tools[active_tool]->get_name();
+			this->tools[active_tool]->select();
 
-                //send new_tool_offsets to robot
-                const float *new_tool_offset = tools[new_tool]->get_offset();
-                THEROBOT->setToolOffset(new_tool_offset);
-            }
-        }
+			//send new_tool_offsets to robot
+			const float *new_tool_offset = tools[next_tool]->get_offset();
+			THEROBOT->setToolOffset(new_tool_offset);
+		}
     }
 }
 

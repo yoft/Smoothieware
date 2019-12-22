@@ -29,7 +29,7 @@ public:
 
 private:
     vector<Tool *> tools;
-
+    int next_tool;
     int active_tool;
 };
 
