@@ -24,12 +24,13 @@ public:
     void on_set_public_data(void *argument);
     void add_tool(Tool *tool_to_add);
     int get_active_tool() const { return active_tool; }
+    uint16_t get_active_tool_name() const { return this->tools[active_tool]->get_name(); }
+    const float *get_active_tool_offset() const { return this->tools[active_tool]->get_offset(); }
 
 private:
     vector<Tool *> tools;
 
     int active_tool;
-    uint16_t current_tool_name;
 };
 
 

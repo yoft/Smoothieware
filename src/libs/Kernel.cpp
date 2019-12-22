@@ -29,6 +29,7 @@
 #include "Configurator.h"
 #include "SimpleShell.h"
 #include "TemperatureControlPublicAccess.h"
+#include "modules/tools/toolmanager/ToolManager.h"
 
 #ifndef NO_TOOLS_LASER
 #include "Laser.h"
@@ -167,6 +168,7 @@ Kernel::Kernel()
     this->add_module( this->gcode_dispatch = new GcodeDispatch() );
     this->add_module( this->robot          = new Robot()         );
     this->add_module( this->simpleshell    = new SimpleShell()   );
+    this->add_module( this->tool_manager   = new ToolManager()   );
 
     this->planner = new Planner();
     this->configurator = new Configurator();

@@ -32,6 +32,7 @@ class Adc;
 class PublicData;
 class SimpleShell;
 class Configurator;
+class ToolManager;
 
 class Kernel {
     public:
@@ -69,6 +70,7 @@ class Kernel {
         Conveyor*         conveyor;
         Configurator*     configurator;
         SimpleShell*      simpleshell;
+        ToolManager*      tool_manager;
 
         SlowTicker*       slow_ticker;
         StepTicker*       step_ticker;
