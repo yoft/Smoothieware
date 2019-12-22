@@ -19,18 +19,21 @@ public:
     ToolManager();
 
     void on_module_loaded();
+    uint16_t *get_active_tool_name();
+    const float *get_active_tool_offset();
     void on_gcode_received(void *);
     void on_get_public_data(void *argument);
     void on_set_public_data(void *argument);
     void add_tool(Tool *tool_to_add);
     int get_active_tool() const { return active_tool; }
-    uint16_t get_active_tool_name() const { return this->tools[active_tool]->get_name(); }
-    const float *get_active_tool_offset() const { return this->tools[active_tool]->get_offset(); }
 
 private:
+    void change_tool();
     vector<Tool *> tools;
+
     int next_tool;
     int active_tool;
+    uint16_t current_tool_name;
 };
 
 
