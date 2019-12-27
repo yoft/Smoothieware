@@ -41,6 +41,7 @@
 
 Laser::Laser()
 {
+    this->selected = false;
     laser_on = false;
     scale = 1;
     manual_fire = false;
@@ -133,7 +134,7 @@ void Laser::on_console_line_received( void *argument )
     string cmd = shift_parameter(possible_command);
 
     // Act depending on command
-    if (cmd == "fire") {
+    if (selected && (cmd == "fire")) {
         string power = shift_parameter(possible_command);
         if(power.empty()) {
             msgp->stream->printf("Usage: fire power%% [durationms]|off|status\n");
@@ -190,17 +191,30 @@ void Laser::on_gcode_received(void *argument)
 {
     Gcode *gcode = static_cast<Gcode *>(argument);
 
-    // M codes execute immediately
-    if (gcode->has_m) {
-        if (gcode->m == 221) { // M221 S100 change laser power by percentage S
-            if(gcode->has_letter('S')) {
-                this->scale = gcode->get_value('S') / 100.0F;
+    if(selected) {
+		// M codes execute immediately
+		if (gcode->has_m) {
+			if (gcode->m == 221) { // M221 S100 change laser power by percentage S
+				if(gcode->has_letter('S')) {
+					this->scale = gcode->get_value('S') / 100.0F;
 
-            } else {
-                gcode->stream->printf("Laser power scale at %6.2f %%\n", this->scale * 100.0F);
-            }
-        }
+				} else {
+					gcode->stream->printf("Laser power scale at %6.2f %%\n", this->scale * 100.0F);
+				}
+			}
+		}
     }
+}
+
+void Laser::select()
+{
+    selected = true;
+}
+
+void Laser::deselect()
+{
+    selected = false;
+    set_laser_power(0);
 }
 
 // calculates the current speed ratio from the currently executing block
@@ -245,6 +259,8 @@ bool Laser::get_laser_power(float& power) const
 // called every millisecond from timer ISR
 uint32_t Laser::set_proportional_power(uint32_t dummy)
 {
+	if (!selected) return 0;
+
     if(manual_fire) {
         // If we have fire duration set
         if (fire_duration > 0) {

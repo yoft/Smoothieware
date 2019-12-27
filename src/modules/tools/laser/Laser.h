@@ -32,6 +32,8 @@ class Laser : public Tool {
         float get_scale() const { return scale*100; }
         bool set_laser_power(float p);
         float get_current_power() const;
+        void select();
+        void deselect();
 
     private:
         uint32_t set_proportional_power(uint32_t dummy);
@@ -53,5 +55,6 @@ class Laser : public Tool {
             bool ttl_used:1;        // stores whether we have a TTL output
             bool ttl_inverting:1;   // stores whether the TTL output should be inverted
             bool manual_fire:1;     // set when manually firing
+            bool selected:1;
         };
 };
