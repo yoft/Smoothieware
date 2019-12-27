@@ -23,7 +23,7 @@
 #endif
 
 #ifndef N_PRIMARY_AXIS
-    // This may chnage and include ABC
+    // This may change and include ABC
     #define N_PRIMARY_AXIS 3
 #endif
 
