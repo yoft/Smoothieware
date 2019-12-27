@@ -8,9 +8,10 @@
 #ifndef SPINDLE_CONTROL_MODULE_H
 #define SPINDLE_CONTROL_MODULE_H
 
+#include "Tool.h"
 #include "libs/Module.h"
 
-class SpindleControl: public Module {
+class SpindleControl: public Tool {
     public:
         SpindleControl() {};
         virtual ~SpindleControl() {};

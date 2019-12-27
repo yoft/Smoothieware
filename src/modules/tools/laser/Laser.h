@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "Tool.h"
 #include "libs/Module.h"
 
 #include <stdint.h>
@@ -17,7 +18,7 @@ namespace mbed {
 class Pin;
 class Block;
 
-class Laser : public Module{
+class Laser : public Tool {
     public:
         Laser();
         virtual ~Laser() {};
