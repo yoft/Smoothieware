@@ -192,7 +192,7 @@ void Laser::on_gcode_received(void *argument)
     Gcode *gcode = static_cast<Gcode *>(argument);
 
     // M codes execute immediately
-    //	if (gcode->has_m) {
+//    if (gcode->has_m) {
     if (selected && gcode->has_m) {
         if (gcode->m == 221) { // M221 S100 change laser power by percentage S
             if(gcode->has_letter('S')) {
