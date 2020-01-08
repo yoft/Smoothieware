@@ -60,7 +60,7 @@ void ToolManager::on_gcode_received(void *argument)
             char buf[32]; // should be big enough for any status
             int n = snprintf(buf, sizeof(buf), "T%d invalid tool ", new_tool);
             gcode->txt_after_ok.append(buf, n);
-        }else{
+        } else {
             this->next_tool=new_tool;
         }
     }
@@ -124,9 +124,10 @@ void ToolManager::add_tool(Tool* tool_to_add)
 {
     if(this->tools.size() == 0) {
         tool_to_add->select();
-        //this->current_tool_name = tool_to_add->get_name();
+//        this->current_tool_name = tool_to_add->get_name();
         //send new_tool_offsets to robot
-        //const float *new_tool_offset = tool_to_add->get_offset();
+//        const float *new_tool_offset = tool_to_add->get_offset();
+//        THEROBOT->setToolOffset(new_tool_offset);
         THEROBOT->setToolOffset(this->get_active_tool_offset());
     } else {
         tool_to_add->deselect();

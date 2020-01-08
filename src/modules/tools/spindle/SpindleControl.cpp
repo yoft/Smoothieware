@@ -16,7 +16,7 @@ void SpindleControl::on_gcode_received(void *argument)
     
     Gcode *gcode = static_cast<Gcode *>(argument);
         
-    if (gcode->has_m)
+    if (selected && gcode->has_m)
     {
         if (gcode->m == 957)
         {
@@ -70,4 +70,24 @@ void SpindleControl::on_halt(void *argument)
             turn_off();
         }
     }
+}
+
+void SpindleControl::select()
+{
+    selected = true;
+}
+
+void SpindleControl::deselect()
+{
+    selected = false;
+
+    set_speed(0);
+    if(spindle_on) {
+        turn_off();
+    }
+}
+
+bool SpindleControl::is_selected()
+{
+    return selected;
 }

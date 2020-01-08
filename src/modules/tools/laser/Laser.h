@@ -32,8 +32,10 @@ class Laser : public Tool {
         float get_scale() const { return scale*100; }
         bool set_laser_power(float p);
         float get_current_power() const;
+
         void select();
         void deselect();
+        bool is_selected();
 
     private:
         uint32_t set_proportional_power(uint32_t dummy);

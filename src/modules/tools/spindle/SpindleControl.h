@@ -17,6 +17,10 @@ class SpindleControl: public Tool {
         virtual ~SpindleControl() {};
         virtual void on_module_loaded() {};
 
+        void select();
+        void deselect();
+        bool is_selected();
+
     protected:
         bool spindle_on;
 
@@ -32,6 +36,10 @@ class SpindleControl: public Tool {
         virtual void set_i_term(float) {};
         virtual void set_d_term(float) {};
         virtual void report_settings(void) {};
+
+        struct {
+            bool selected:1;
+        };
 };
 
 #endif

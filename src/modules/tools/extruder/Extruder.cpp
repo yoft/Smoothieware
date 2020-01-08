@@ -138,6 +138,11 @@ void Extruder::deselect()
     THEROBOT->get_e_scale_fnc = nullptr;
 }
 
+bool Extruder::is_selected()
+{
+    return selected;
+}
+
 void Extruder::on_get_public_data(void *argument)
 {
     PublicDataRequest *pdr = static_cast<PublicDataRequest *>(argument);
