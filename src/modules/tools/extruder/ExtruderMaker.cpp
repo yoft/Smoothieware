@@ -69,14 +69,14 @@ void ExtruderMaker::load_tools(){
             // Add the Extruder module to the kernel
             THEKERNEL->add_module( extruder );
 
-            //if(toolmanager != nullptr) {
+//            if(toolmanager != nullptr) {
                 // Add the extruder module to the ToolsManager if it was created
                 THEKERNEL->tool_manager->add_tool( extruder );
 
-            //}else{
+//            }else{
                 // if not managed by toolmanager we need to enable the one extruder
-                extruder->select();
-            //}
+//                extruder->select();
+//            }
         }
 
     }
