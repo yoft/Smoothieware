@@ -1295,5 +1295,6 @@ void SimpleShell::help_command( string parameters, StreamOutput *stream )
     stream->printf("calc_thermistor [-s0] T1,R1,T2,R2,T3,R3 - calculate the Steinhart Hart coefficients for a thermistor\r\n");
     stream->printf("thermistors - print out the predefined thermistors\r\n");
     stream->printf("md5sum file - prints md5 sum of the given file\r\n");
+    stream->printf("tools - prints a list of tools and their checksums\r\n");
 }
 

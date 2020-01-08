@@ -18,6 +18,7 @@
 #include "checksumm.h"
 #include "PublicData.h"
 #include "Gcode.h"
+#include "utils.h"
 
 #include "libs/SerialMessage.h"
 #include "libs/StreamOutput.h"
@@ -73,6 +74,29 @@ void ToolManager::on_gcode_received(void *argument)
 
         }else if (this->next_tool != this->active_tool) {
             this->change_tool();
+        }
+    }
+}
+
+void ToolManager::on_console_line_received( void *argument )
+{
+    if(THEKERNEL->is_halted()) return; // if in halted state ignore any commands
+
+    SerialMessage *msgp = static_cast<SerialMessage *>(argument);
+    string possible_command = msgp->message;
+
+    // ignore anything that is not lowercase or a letter
+    if(possible_command.empty() || !islower(possible_command[0]) || !isalpha(possible_command[0])) {
+        return;
+    }
+
+    string cmd = shift_parameter(possible_command);
+
+    // Act depending on command
+    if (cmd == "tools") {
+        msgp->stream->printf("%d tools defined:\n", (int)this->tools.size());
+        for(int i=0;i<(int)this->tools.size();i++) {
+            msgp->stream->printf("%d: %d%s\n",i, this->tools[i]->get_name(),(i==this->active_tool)?"*":"");
         }
     }
 }

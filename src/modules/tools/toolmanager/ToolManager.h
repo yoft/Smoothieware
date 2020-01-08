@@ -10,6 +10,7 @@
 
 using namespace std;
 #include <vector>
+#include <stdint.h>
 
 class Tool;
 
@@ -22,6 +23,7 @@ public:
     uint16_t *get_active_tool_name();
     const float *get_active_tool_offset();
     void on_gcode_received(void *);
+    void on_console_line_received(void *argument);
     void on_get_public_data(void *argument);
     void on_set_public_data(void *argument);
     void add_tool(Tool *tool_to_add);

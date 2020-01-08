@@ -13,6 +13,7 @@
 #define THEROBOT THEKERNEL->robot
 
 #include "Module.h"
+#include "ToolManager.h"
 #include <array>
 #include <vector>
 #include <string>
@@ -32,7 +33,6 @@ class Adc;
 class PublicData;
 class SimpleShell;
 class Configurator;
-class ToolManager;
 
 class Kernel {
     public:

@@ -114,6 +114,8 @@ void Laser::on_module_loaded()
     this->register_for_event(ON_CONSOLE_LINE_RECEIVED);
     this->register_for_event(ON_GET_PUBLIC_DATA);
 
+    THEKERNEL->tool_manager->add_tool( this );
+
     // no point in updating the power more than the PWM frequency, but not faster than 1KHz
     ms_per_tick = 1000 / std::min(1000UL, 1000000 / period);
     THEKERNEL->slow_ticker->attach(std::min(1000UL, 1000000 / period), this, &Laser::set_proportional_power);

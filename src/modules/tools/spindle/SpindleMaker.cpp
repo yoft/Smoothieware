@@ -63,6 +63,7 @@ void SpindleMaker::load_spindle(){
         }
 
         THEKERNEL->add_module( spindle );
+        THEKERNEL->tool_manager->add_tool( spindle );
     }
 
 }
