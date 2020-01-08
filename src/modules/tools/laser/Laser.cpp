@@ -191,19 +191,18 @@ void Laser::on_gcode_received(void *argument)
 {
     Gcode *gcode = static_cast<Gcode *>(argument);
 
-    if(selected) {
-		// M codes execute immediately
-		if (gcode->has_m) {
-			if (gcode->m == 221) { // M221 S100 change laser power by percentage S
-				if(gcode->has_letter('S')) {
-					this->scale = gcode->get_value('S') / 100.0F;
+	// M codes execute immediately
+//	if (gcode->has_m) {
+	if (selected && gcode->has_m) {
+		if (gcode->m == 221) { // M221 S100 change laser power by percentage S
+			if(gcode->has_letter('S')) {
+				this->scale = gcode->get_value('S') / 100.0F;
 
-				} else {
-					gcode->stream->printf("Laser power scale at %6.2f %%\n", this->scale * 100.0F);
-				}
+			} else {
+				gcode->stream->printf("Laser power scale at %6.2f %%\n", this->scale * 100.0F);
 			}
 		}
-    }
+	}
 }
 
 void Laser::select()
