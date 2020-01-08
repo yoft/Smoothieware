@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "Tool.h"
 #include "libs/Module.h"
 
 #include <stdint.h>
@@ -17,7 +18,7 @@ namespace mbed {
 class Pin;
 class Block;
 
-class Laser : public Module{
+class Laser : public Tool {
     public:
         Laser();
         virtual ~Laser() {};
@@ -31,6 +32,8 @@ class Laser : public Module{
         float get_scale() const { return scale*100; }
         bool set_laser_power(float p);
         float get_current_power() const;
+        void select();
+        void deselect();
 
     private:
         uint32_t set_proportional_power(uint32_t dummy);
@@ -52,5 +55,6 @@ class Laser : public Module{
             bool ttl_used:1;        // stores whether we have a TTL output
             bool ttl_inverting:1;   // stores whether the TTL output should be inverted
             bool manual_fire:1;     // set when manually firing
+            bool selected:1;
         };
 };

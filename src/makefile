@@ -101,7 +101,9 @@ DEFINES += -DN_PRIMARY_AXIS=$(PAXIS)
 endif
 
 # set to not compile in any network support
-#export NONETWORK = 1
+ifneq "$(NONETWORK)" ""
+	export NONETWORK = 1
+endif
 
 include $(BUILD_DIR)/build.mk
 
