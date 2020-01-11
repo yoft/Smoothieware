@@ -31,6 +31,7 @@
 #define laser_module_pin_checksum               CHECKSUM("laser_module_pin")
 #define laser_module_pwm_pin_checksum           CHECKSUM("laser_module_pwm_pin")
 #define laser_module_ttl_pin_checksum           CHECKSUM("laser_module_ttl_pin")
+#define laser_module_motor_enable_pin_checksum  CHECKSUM("laser_module_motor_enable_pin")
 #define laser_module_pwm_period_checksum        CHECKSUM("laser_module_pwm_period")
 #define laser_module_maximum_power_checksum     CHECKSUM("laser_module_maximum_power")
 #define laser_module_minimum_power_checksum     CHECKSUM("laser_module_minimum_power")
@@ -46,6 +47,13 @@ Laser::Laser()
     scale = 1;
     manual_fire = false;
     fire_duration = 0;
+    ttl_pin = NULL;
+    pwm_pin = NULL;
+    ms_per_tick = 0;
+    laser_maximum_s_value=0;
+    laser_maximum_power=0;
+    laser_minimum_power=0;
+    motor_enable_pin=NULL;
 }
 
 void Laser::on_module_loaded()
@@ -81,7 +89,7 @@ void Laser::on_module_loaded()
 
     // TTL settings
     this->ttl_pin = new Pin();
-    ttl_pin->from_string( THEKERNEL->config->value(laser_module_ttl_pin_checksum)->by_default("nc" )->as_string())->as_output();
+    ttl_pin->from_string( THEKERNEL->config->value(laser_module_ttl_pin_checksum)->by_default("nc")->as_string())->as_output();
     this->ttl_used = ttl_pin->connected();
     this->ttl_inverting = ttl_pin->is_inverting();
     if (ttl_used) {
@@ -91,6 +99,15 @@ void Laser::on_module_loaded()
         ttl_pin = NULL;
     }
 
+
+    this->motor_enable_pin = new Pin();
+    motor_enable_pin->from_string( THEKERNEL->config->value(laser_module_motor_enable_pin_checksum)->by_default("nc")->as_string())->as_output();
+    if (motor_enable_pin->connected()) {
+        motor_enable_pin->set(false);
+    }else{
+        delete motor_enable_pin;
+        motor_enable_pin=NULL;
+    }
 
     uint32_t period = THEKERNEL->config->value(laser_module_pwm_period_checksum)->by_default(20)->as_number();
     this->pwm_pin->period_us(period);
@@ -209,12 +226,14 @@ void Laser::on_gcode_received(void *argument)
 void Laser::select()
 {
     selected = true;
+    motor_enable_pin->set(true);
 }
 
 void Laser::deselect()
 {
     selected = false;
     set_laser_power(0);
+    motor_enable_pin->set(false);
 }
 
 bool Laser::is_selected()
