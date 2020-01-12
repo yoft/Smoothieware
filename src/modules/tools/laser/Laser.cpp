@@ -226,14 +226,18 @@ void Laser::on_gcode_received(void *argument)
 void Laser::select()
 {
     selected = true;
-    motor_enable_pin->set(true);
+    if (this->motor_enable_pin!=NULL && this->motor_enable_pin->connected()) {
+        this->motor_enable_pin->set(true);
+    }
 }
 
 void Laser::deselect()
 {
     selected = false;
     set_laser_power(0);
-    motor_enable_pin->set(false);
+    if (this->motor_enable_pin!=NULL && this->motor_enable_pin->connected()) {
+        this->motor_enable_pin->set(false);
+    }
 }
 
 bool Laser::is_selected()

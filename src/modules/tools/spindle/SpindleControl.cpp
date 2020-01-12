@@ -75,6 +75,9 @@ void SpindleControl::on_halt(void *argument)
 void SpindleControl::select()
 {
     selected = true;
+    if (this->motor_enable_pin!=NULL && this->motor_enable_pin->connected()) {
+        this->motor_enable_pin->set(true);
+    }
 }
 
 void SpindleControl::deselect()
@@ -84,6 +87,9 @@ void SpindleControl::deselect()
     set_speed(0);
     if(spindle_on) {
         turn_off();
+    }
+    if (this->motor_enable_pin!=NULL && this->motor_enable_pin->connected()) {
+        this->motor_enable_pin->set(false);
     }
 }
 

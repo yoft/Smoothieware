@@ -8,6 +8,7 @@
 #pragma once
 
 #include "Module.h"
+#include "Pin.h"
 
 #include <stdint.h>
 
@@ -26,5 +27,6 @@ public:
 protected:
     float offset[3];
     uint16_t identifier;
+    Pin *motor_enable_pin;      // Output to enable the motors that move the laser tool head
 };
 

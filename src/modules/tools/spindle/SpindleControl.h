@@ -11,6 +11,7 @@
 #include "Tool.h"
 #include "libs/Module.h"
 
+
 class SpindleControl: public Tool {
     public:
         SpindleControl() {};
@@ -37,9 +38,7 @@ class SpindleControl: public Tool {
         virtual void set_d_term(float) {};
         virtual void report_settings(void) {};
 
-        struct {
-            bool selected:1;
-        };
+        bool selected;
 };
 
 #endif

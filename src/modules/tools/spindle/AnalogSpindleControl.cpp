@@ -21,6 +21,7 @@
 #define spindle_pwm_pin_checksum            CHECKSUM("pwm_pin")
 #define spindle_pwm_period_checksum         CHECKSUM("pwm_period")
 #define spindle_switch_on_pin_checksum      CHECKSUM("switch_on_pin")
+#define spindle_motor_enable_pin_checksum   CHECKSUM("motor_enable_pin")
 
 void AnalogSpindleControl::on_module_loaded()
 {
@@ -29,6 +30,15 @@ void AnalogSpindleControl::on_module_loaded()
     target_rpm = 0;
     min_rpm = THEKERNEL->config->value(spindle_checksum, spindle_min_rpm_checksum)->by_default(100)->as_int();
     max_rpm = THEKERNEL->config->value(spindle_checksum, spindle_max_rpm_checksum)->by_default(5000)->as_int();
+
+    this->motor_enable_pin = new Pin();
+    motor_enable_pin->from_string( THEKERNEL->config->value(spindle_checksum, spindle_motor_enable_pin_checksum)->by_default("nc")->as_string())->as_output();
+    if (motor_enable_pin->connected()) {
+        motor_enable_pin->set(false);
+    }else{
+        delete motor_enable_pin;
+        motor_enable_pin=NULL;
+    }
 
     // Get the pin for hardware pwm
     {
