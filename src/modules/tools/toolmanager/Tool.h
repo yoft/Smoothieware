@@ -9,6 +9,7 @@
 
 #include "Module.h"
 #include "Pin.h"
+#include "libs/StepperMotor.h"
 
 #include <stdint.h>
 
@@ -23,10 +24,11 @@ public:
     virtual bool is_selected()= 0;
     virtual const float *get_offset() const { return offset; }
     virtual uint16_t get_name() const { return identifier; }
+    virtual StepperMotor *get_x_axis_stepper() const { return x_stepper; }
 
 protected:
     float offset[3];
     uint16_t identifier;
-    Pin *motor_enable_pin;      // Output to enable the motors that move the laser tool head
+    StepperMotor *x_stepper=NULL;
 };
 

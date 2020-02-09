@@ -31,6 +31,7 @@ ToolManager::ToolManager()
     active_tool = -1;
     next_tool = -1;
     current_tool_name=0;
+    default_x_stepper=THEROBOT->actuators[0];
 }
 
 uint16_t *ToolManager::get_active_tool_name() {
@@ -165,6 +166,7 @@ void ToolManager::change_tool()
     // We must wait for an empty queue before we can disable the current tool
     THEKERNEL->conveyor->wait_for_idle();
     this->tools[active_tool]->deselect();
+
     THEKERNEL->conveyor->wait_for_idle();
     this->active_tool = this->next_tool;
     //this->current_tool_name = this->tools[active_tool]->get_name();
@@ -172,9 +174,12 @@ void ToolManager::change_tool()
     //send new_tool_offsets to robot
     //const float *new_tool_offset = tools[next_tool]->get_offset();
     THEROBOT->setToolOffset(this->get_active_tool_offset());
+    THEROBOT->actuators[0] = (this->tools[active_tool]->get_x_axis_stepper()!=NULL)?this->tools[active_tool]->get_x_axis_stepper():this->get_default_x_stepper();
 
     this->tools[active_tool]->select();
     THEKERNEL->conveyor->wait_for_idle();
+
+
 }
 
 

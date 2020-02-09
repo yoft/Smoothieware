@@ -16,12 +16,14 @@
 #include "checksumm.h"
 #include "ConfigValue.h"
 #include "StreamOutputPool.h"
+#include "nuts_bolts.h"
 
 #define spindle_checksum                   CHECKSUM("spindle")
 #define enable_checksum                    CHECKSUM("enable")
 #define spindle_type_checksum              CHECKSUM("type")
 #define spindle_vfd_type_checksum          CHECKSUM("vfd_type")
 #define spindle_ignore_on_halt_checksum    CHECKSUM("ignore_on_halt")
+#define spindle_motor_for_x_axis_checksum  CHECKSUM("motor_for_x_axis")
 
 void SpindleMaker::load_spindle(){
 
@@ -35,7 +37,7 @@ void SpindleMaker::load_spindle(){
 
     // get the two config options that make us able to determine which spindle module we need to load
     std::string spindle_type = THEKERNEL->config->value( spindle_checksum, spindle_type_checksum )->by_default("pwm")->as_string();
-    std::string vfd_type = THEKERNEL->config->value( spindle_checksum, spindle_vfd_type_checksum )->by_default("none")->as_string(); 
+    std::string vfd_type = THEKERNEL->config->value( spindle_checksum, spindle_vfd_type_checksum )->by_default("none")->as_string();
 
     // check config which spindle type we need
     if( spindle_type.compare("pwm") == 0 ) {
@@ -56,6 +58,13 @@ void SpindleMaker::load_spindle(){
 
     // Add the spindle if we successfully initialized one
     if( spindle != NULL) {
+
+        int axis_num=THEKERNEL->config->value(spindle_checksum, spindle_motor_for_x_axis_checksum)->by_default(ALPHA_STEPPER)->as_int();
+        if (axis_num>ALPHA_STEPPER && axis_num<=GAMMA_STEPPER) {
+            THEKERNEL->streams->printf("Error: Spindle cannot use axis %d to replace X axis stepper! Must be >%d. Using default X stepper motor.\n", axis_num, GAMMA_STEPPER);
+        }else{
+            spindle->x_stepper=THEROBOT->actuators[axis_num];
+        }
 
         spindle->register_for_event(ON_GCODE_RECEIVED);
         if (!THEKERNEL->config->value(spindle_checksum, spindle_ignore_on_halt_checksum)->by_default(false)->as_bool()) {

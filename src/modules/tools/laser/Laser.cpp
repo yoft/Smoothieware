@@ -31,7 +31,7 @@
 #define laser_module_pin_checksum               CHECKSUM("laser_module_pin")
 #define laser_module_pwm_pin_checksum           CHECKSUM("laser_module_pwm_pin")
 #define laser_module_ttl_pin_checksum           CHECKSUM("laser_module_ttl_pin")
-#define laser_module_motor_enable_pin_checksum  CHECKSUM("laser_module_motor_enable_pin")
+#define laser_module_motor_for_x_axis_checksum  CHECKSUM("laser_module_motor_for_x_axis")
 #define laser_module_pwm_period_checksum        CHECKSUM("laser_module_pwm_period")
 #define laser_module_maximum_power_checksum     CHECKSUM("laser_module_maximum_power")
 #define laser_module_minimum_power_checksum     CHECKSUM("laser_module_minimum_power")
@@ -53,7 +53,7 @@ Laser::Laser()
     laser_maximum_s_value=0;
     laser_maximum_power=0;
     laser_minimum_power=0;
-    motor_enable_pin=NULL;
+    x_stepper=NULL;
 }
 
 void Laser::on_module_loaded()
@@ -99,14 +99,11 @@ void Laser::on_module_loaded()
         ttl_pin = NULL;
     }
 
-
-    this->motor_enable_pin = new Pin();
-    motor_enable_pin->from_string( THEKERNEL->config->value(laser_module_motor_enable_pin_checksum)->by_default("nc")->as_string())->as_output();
-    if (motor_enable_pin->connected()) {
-        motor_enable_pin->set(false);
+    int axis_num=THEKERNEL->config->value(laser_module_motor_for_x_axis_checksum)->by_default(ALPHA_STEPPER)->as_int();
+    if (axis_num>ALPHA_STEPPER && axis_num<=GAMMA_STEPPER) {
+        THEKERNEL->streams->printf("Error: Laser cannot use axis %d to replace X axis! Must be >%d. Using default X stepper motor\n", axis_num, GAMMA_STEPPER);
     }else{
-        delete motor_enable_pin;
-        motor_enable_pin=NULL;
+        x_stepper=THEROBOT->actuators[axis_num];
     }
 
     uint32_t period = THEKERNEL->config->value(laser_module_pwm_period_checksum)->by_default(20)->as_number();
@@ -226,18 +223,12 @@ void Laser::on_gcode_received(void *argument)
 void Laser::select()
 {
     selected = true;
-    if (this->motor_enable_pin!=NULL && this->motor_enable_pin->connected()) {
-        this->motor_enable_pin->set(true);
-    }
 }
 
 void Laser::deselect()
 {
     selected = false;
     set_laser_power(0);
-    if (this->motor_enable_pin!=NULL && this->motor_enable_pin->connected()) {
-        this->motor_enable_pin->set(false);
-    }
 }
 
 bool Laser::is_selected()
