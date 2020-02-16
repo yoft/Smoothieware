@@ -12,9 +12,10 @@ using namespace std;
 #include <vector>
 #include <stdint.h>
 
-#include "libs/StepperMotor.h"
+//#include "libs/StepperMotor.h"
 
 class Tool;
+class StepperMotor;
 
 class ToolManager : public Module
 {

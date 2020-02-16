@@ -9,9 +9,11 @@
 
 #include "Module.h"
 #include "Pin.h"
-#include "libs/StepperMotor.h"
+//#include "libs/StepperMotor.h"
 
 #include <stdint.h>
+
+class StepperMotor;
 
 class Tool : public Module
 {
