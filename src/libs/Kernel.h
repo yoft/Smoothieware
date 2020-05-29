@@ -13,7 +13,8 @@
 #define THEROBOT THEKERNEL->robot
 
 #include "Module.h"
-#include "ToolManager.h"
+#include "modules/tools/toolmanager/ToolManager.h"
+#include "modules/robot/Robot.h"
 #include <array>
 #include <vector>
 #include <string>
@@ -26,13 +27,14 @@ class SlowTicker;
 class SerialConsole;
 class StreamOutputPool;
 class GcodeDispatch;
-class Robot;
+//class Robot;
 class Planner;
 class StepTicker;
 class Adc;
 class PublicData;
 class SimpleShell;
 class Configurator;
+//class ToolManager;
 
 class Kernel {
     public:

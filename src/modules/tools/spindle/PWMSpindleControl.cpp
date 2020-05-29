@@ -34,7 +34,6 @@
 #define spindle_control_I_checksum          CHECKSUM("control_I")
 #define spindle_control_D_checksum          CHECKSUM("control_D")
 #define spindle_control_smoothing_checksum  CHECKSUM("control_smoothing")
-#define spindle_motor_enable_pin_checksum   CHECKSUM("motor_enable_pin")
 
 #define UPDATE_FREQ 1000
 
@@ -88,14 +87,6 @@ void PWMSpindleControl::on_module_loaded()
     pwm_pin->period_us(period);
     pwm_pin->write(output_inverted ? 1 : 0);
 
-    this->motor_enable_pin = new Pin();
-    motor_enable_pin->from_string( THEKERNEL->config->value(spindle_checksum, spindle_motor_enable_pin_checksum)->by_default("nc")->as_string())->as_output();
-    if (motor_enable_pin->connected()) {
-        motor_enable_pin->set(false);
-    }else{
-        delete motor_enable_pin;
-        motor_enable_pin=NULL;
-    }
 
     // Get the pin for interrupt
     {

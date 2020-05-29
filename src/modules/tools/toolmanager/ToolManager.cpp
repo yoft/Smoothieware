@@ -172,7 +172,7 @@ void ToolManager::change_tool()
     //this->current_tool_name = this->tools[active_tool]->get_name();
 
     //send new_tool_offsets to robot
-    //const float *new_tool_offset = tools[next_tool]->get_offset();
+    //const float *new_tool_offset = tools[next_tool]->get_occffset();
     THEROBOT->setToolOffset(this->get_active_tool_offset());
     THEROBOT->actuators[0] = (this->tools[active_tool]->get_x_axis_stepper()!=NULL)?this->tools[active_tool]->get_x_axis_stepper():this->get_default_x_stepper();
 

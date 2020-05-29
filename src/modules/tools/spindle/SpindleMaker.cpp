@@ -63,7 +63,7 @@ void SpindleMaker::load_spindle(){
         if (axis_num>ALPHA_STEPPER && axis_num<=GAMMA_STEPPER) {
             THEKERNEL->streams->printf("Error: Spindle cannot use axis %d to replace X axis stepper! Must be >%d. Using default X stepper motor.\n", axis_num, GAMMA_STEPPER);
         }else{
-            spindle->x_stepper=THEROBOT->actuators[axis_num];
+            spindle->set_x_axis_stepper(THEROBOT->actuators[axis_num]);
         }
 
         spindle->register_for_event(ON_GCODE_RECEIVED);

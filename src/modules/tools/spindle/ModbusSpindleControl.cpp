@@ -19,7 +19,6 @@
 #define spindle_rx_pin_checksum             CHECKSUM("rx_pin")
 #define spindle_tx_pin_checksum             CHECKSUM("tx_pin")
 #define spindle_dir_pin_checksum            CHECKSUM("dir_pin")
-#define spindle_motor_enable_pin_checksum   CHECKSUM("motor_enable_pin")
 
 void ModbusSpindleControl::on_module_loaded()
 {
@@ -29,14 +28,6 @@ void ModbusSpindleControl::on_module_loaded()
     PinName tx_pin;
     PinName dir_pin;
     
-    this->motor_enable_pin = new Pin();
-    motor_enable_pin->from_string( THEKERNEL->config->value(spindle_checksum, spindle_motor_enable_pin_checksum)->by_default("nc")->as_string())->as_output();
-    if (motor_enable_pin->connected()) {
-        motor_enable_pin->set(false);
-    }else{
-        delete motor_enable_pin;
-        motor_enable_pin=NULL;
-    }
 
     // preparing PinName objects from the config string
     {
