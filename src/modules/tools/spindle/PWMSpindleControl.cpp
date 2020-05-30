@@ -87,7 +87,6 @@ void PWMSpindleControl::on_module_loaded()
     pwm_pin->period_us(period);
     pwm_pin->write(output_inverted ? 1 : 0);
 
-
     // Get the pin for interrupt
     {
         Pin *smoothie_pin = new Pin();

@@ -3,7 +3,7 @@
     Smoothie is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
     Smoothie is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
     You should have received a copy of the GNU General Public License along with Smoothie. If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 
 #include "Laser.h"
 #include "Module.h"
@@ -89,7 +89,7 @@ void Laser::on_module_loaded()
 
     // TTL settings
     this->ttl_pin = new Pin();
-    ttl_pin->from_string( THEKERNEL->config->value(laser_module_ttl_pin_checksum)->by_default("nc")->as_string())->as_output();
+    ttl_pin->from_string( THEKERNEL->config->value(laser_module_ttl_pin_checksum)->by_default("nc" )->as_string())->as_output();
     this->ttl_used = ttl_pin->connected();
     this->ttl_inverting = ttl_pin->is_inverting();
     if (ttl_used) {
@@ -208,11 +208,11 @@ void Laser::on_gcode_received(void *argument)
     Gcode *gcode = static_cast<Gcode *>(argument);
 
     // M codes execute immediately
-//    if (gcode->has_m) {
     if (selected && gcode->has_m) {
         if (gcode->m == 221) { // M221 S100 change laser power by percentage S
             if(gcode->has_letter('S')) {
                 this->scale = gcode->get_value('S') / 100.0F;
+
             } else {
                 gcode->stream->printf("Laser power scale at %6.2f %%\n", this->scale * 100.0F);
             }

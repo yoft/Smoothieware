@@ -15,7 +15,7 @@ void SpindleControl::on_gcode_received(void *argument)
 {
 
     Gcode *gcode = static_cast<Gcode *>(argument);
-        
+
     if (selected && gcode->has_m)
     {
         if (gcode->m == 957)

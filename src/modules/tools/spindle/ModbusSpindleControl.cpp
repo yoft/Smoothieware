@@ -28,7 +28,6 @@ void ModbusSpindleControl::on_module_loaded()
     PinName tx_pin;
     PinName dir_pin;
     
-
     // preparing PinName objects from the config string
     {
         Pin *smoothie_pin = new Pin();

@@ -27,14 +27,12 @@ class SlowTicker;
 class SerialConsole;
 class StreamOutputPool;
 class GcodeDispatch;
-//class Robot;
 class Planner;
 class StepTicker;
 class Adc;
 class PublicData;
 class SimpleShell;
 class Configurator;
-//class ToolManager;
 
 class Kernel {
     public:

@@ -11,7 +11,6 @@
 #include "Tool.h"
 #include "libs/Module.h"
 
-
 class SpindleControl: public Tool {
     public:
         SpindleControl() {};

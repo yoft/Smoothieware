@@ -3,7 +3,7 @@
       Smoothie is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
       Smoothie is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
       You should have received a copy of the GNU General Public License along with Smoothie. If not, see <http://www.gnu.org/licenses/>.
- */
+*/
 
 #include "libs/Module.h"
 #include "libs/Kernel.h"
@@ -62,6 +62,7 @@ void ToolManager::on_gcode_received(void *argument)
             char buf[32]; // should be big enough for any status
             int n = snprintf(buf, sizeof(buf), "T%d invalid tool ", new_tool);
             gcode->txt_after_ok.append(buf, n);
+
         } else {
             this->next_tool=new_tool;
         }
@@ -149,10 +150,7 @@ void ToolManager::add_tool(Tool* tool_to_add)
 {
     if(this->tools.size() == 0) {
         tool_to_add->select();
-//        this->current_tool_name = tool_to_add->get_name();
         //send new_tool_offsets to robot
-//        const float *new_tool_offset = tool_to_add->get_offset();
-//        THEROBOT->setToolOffset(new_tool_offset);
         THEROBOT->setToolOffset(this->get_active_tool_offset());
     } else {
         tool_to_add->deselect();
@@ -169,10 +167,8 @@ void ToolManager::change_tool()
 
     THEKERNEL->conveyor->wait_for_idle();
     this->active_tool = this->next_tool;
-    //this->current_tool_name = this->tools[active_tool]->get_name();
 
     //send new_tool_offsets to robot
-    //const float *new_tool_offset = tools[next_tool]->get_occffset();
     THEROBOT->setToolOffset(this->get_active_tool_offset());
     THEROBOT->actuators[0] = (this->tools[active_tool]->get_x_axis_stepper()!=NULL)?this->tools[active_tool]->get_x_axis_stepper():this->get_default_x_stepper();
 
