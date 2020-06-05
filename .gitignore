@@ -21,7 +21,6 @@ debug
 /mac_install.log
 /win_install.log
 /linux_install.log
-/src/default_excludes.mk
 
 .settings
 /.cproject

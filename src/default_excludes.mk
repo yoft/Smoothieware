@@ -1,0 +1,1 @@
+export EXCLUDE_MODULES = tools/temperaturecontrol tools/temperatureswitch tools/extruder tools/drillingcycles tools/filamentdetector tools/scaracal tools/rotarydeltacalibration
