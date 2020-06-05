@@ -46,6 +46,7 @@ const float *ToolManager::get_active_tool_offset() {
 void ToolManager::on_module_loaded()
 {
 
+    this->register_for_event(ON_CONSOLE_LINE_RECEIVED);
     this->register_for_event(ON_GCODE_RECEIVED);
     this->register_for_event(ON_GET_PUBLIC_DATA);
     this->register_for_event(ON_SET_PUBLIC_DATA);
