@@ -47,12 +47,6 @@ Laser::Laser()
     scale = 1;
     manual_fire = false;
     fire_duration = 0;
-    ttl_pin = NULL;
-    pwm_pin = NULL;
-    ms_per_tick = 0;
-    laser_maximum_s_value=0;
-    laser_maximum_power=0;
-    laser_minimum_power=0;
     x_stepper=NULL;
 }
 
