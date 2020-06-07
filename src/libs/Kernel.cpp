@@ -29,7 +29,6 @@
 #include "Configurator.h"
 #include "SimpleShell.h"
 #include "TemperatureControlPublicAccess.h"
-#include "modules/tools/toolmanager/ToolManager.h"
 
 #ifndef NO_TOOLS_LASER
 #include "Laser.h"
