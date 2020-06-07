@@ -23,6 +23,7 @@
 #include "Gcode.h"
 #include "PwmOut.h" // mbed.h lib
 #include "PublicDataRequest.h"
+#include "ToolManager.h"
 
 #include <algorithm>
 
@@ -47,7 +48,6 @@ Laser::Laser()
     scale = 1;
     manual_fire = false;
     fire_duration = 0;
-    x_stepper=NULL;
 }
 
 void Laser::on_module_loaded()
@@ -97,7 +97,7 @@ void Laser::on_module_loaded()
     if (axis_num>ALPHA_STEPPER && axis_num<=GAMMA_STEPPER) {
         THEKERNEL->streams->printf("Error: Laser cannot use axis %d to replace X axis! Must be >%d. Using default X stepper motor\n", axis_num, GAMMA_STEPPER);
     }else{
-        x_stepper=THEROBOT->actuators[axis_num];
+        x_stepper=axis_num;
     }
 
     uint32_t period = THEKERNEL->config->value(laser_module_pwm_period_checksum)->by_default(20)->as_number();

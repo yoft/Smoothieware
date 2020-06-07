@@ -25,12 +25,12 @@ public:
     virtual bool is_selected()= 0;
     virtual const float *get_offset() const { return offset; }
     virtual uint16_t get_name() const { return identifier; }
-    virtual StepperMotor *get_x_axis_stepper() const { return x_stepper; }
-    virtual void set_x_axis_stepper(StepperMotor *new_x_stepper) { x_stepper=new_x_stepper; }
+    virtual int get_x_axis_stepper() const { return x_stepper; }
+    virtual void set_x_axis_stepper(int new_x_stepper) { x_stepper=new_x_stepper; }
 
 protected:
     float offset[3];
     uint16_t identifier;
-    StepperMotor *x_stepper=NULL;
+    int x_stepper;
 };
 

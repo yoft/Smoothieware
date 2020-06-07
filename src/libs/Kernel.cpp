@@ -28,6 +28,7 @@
 #include "EndstopsPublicAccess.h"
 #include "Configurator.h"
 #include "SimpleShell.h"
+#include "ToolManager.h"
 #include "TemperatureControlPublicAccess.h"
 
 #ifndef NO_TOOLS_LASER
