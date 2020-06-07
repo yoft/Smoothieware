@@ -31,7 +31,6 @@ ToolManager::ToolManager()
     active_tool = -1;
     next_tool = -1;
     current_tool_name=0;
-    default_x_stepper=THEROBOT->actuators[0];
 }
 
 uint16_t *ToolManager::get_active_tool_name() {
@@ -171,7 +170,7 @@ void ToolManager::change_tool()
 
     //send new_tool_offsets to robot
     THEROBOT->setToolOffset(this->get_active_tool_offset());
-    THEROBOT->actuators[0] = (this->tools[active_tool]->get_x_axis_stepper()!=NULL)?this->tools[active_tool]->get_x_axis_stepper():this->get_default_x_stepper();
+    //THEROBOT->actuators[0] = (this->tools[active_tool]->get_x_axis_stepper()!=NULL)?this->tools[active_tool]->get_x_axis_stepper():this->get_default_x_stepper();
 
     this->tools[active_tool]->select();
     THEKERNEL->conveyor->wait_for_idle();

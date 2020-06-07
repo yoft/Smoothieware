@@ -31,12 +31,10 @@ public:
     void on_set_public_data(void *argument);
     void add_tool(Tool *tool_to_add);
     int get_active_tool() const { return active_tool; }
-    StepperMotor *get_default_x_stepper() const { return default_x_stepper; }
 
 private:
     void change_tool();
     vector<Tool *> tools;
-    StepperMotor *default_x_stepper;
 
     int next_tool;
     int active_tool;
