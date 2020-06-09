@@ -87,8 +87,3 @@ void SpindleControl::deselect()
         turn_off();
     }
 }
-
-bool SpindleControl::is_selected()
-{
-    return selected;
-}

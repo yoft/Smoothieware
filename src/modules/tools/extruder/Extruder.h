@@ -27,7 +27,6 @@ class Extruder : public Tool {
 
         void select();
         void deselect();
-        bool is_selected();
         float get_e_scale(void) const { return volumetric_multiplier * extruder_multiplier; }
 
     private:

@@ -35,7 +35,6 @@ class Laser : public Tool {
 
         void select();
         void deselect();
-        bool is_selected();
 
     private:
         uint32_t set_proportional_power(uint32_t dummy);

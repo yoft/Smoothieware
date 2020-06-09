@@ -19,7 +19,6 @@ class SpindleControl: public Tool {
 
         void select();
         void deselect();
-        bool is_selected();
 
     protected:
         bool spindle_on;

@@ -22,7 +22,7 @@ public:
 
     virtual void select()= 0;
     virtual void deselect()= 0;
-    virtual bool is_selected()= 0;
+    virtual bool is_selected() { return selected; }
     virtual const float *get_offset() const { return offset; }
     virtual uint16_t get_name() const { return identifier; }
     virtual int get_x_axis_stepper() const { return x_stepper; }
@@ -31,6 +31,7 @@ public:
 protected:
     float offset[3];
     uint16_t identifier;
+    bool selected;
     int x_stepper;
 };
 

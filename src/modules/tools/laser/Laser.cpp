@@ -225,11 +225,6 @@ void Laser::deselect()
     set_laser_power(0);
 }
 
-bool Laser::is_selected()
-{
-    return selected;
-}
-
 // calculates the current speed ratio from the currently executing block
 float Laser::current_speed_ratio(const Block *block) const
 {
