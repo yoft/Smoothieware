@@ -149,10 +149,9 @@ void ToolManager::on_set_public_data(void* argument)
 void ToolManager::add_tool(Tool* tool_to_add)
 {
     if(this->tools.size() == 0) {
-        this->active_tool=0;
         tool_to_add->select();
         //send new_tool_offsets to robot
-        THEROBOT->setToolOffset(this->get_active_tool_offset());
+//        THEROBOT->setToolOffset(this->get_active_tool_offset());
     } else {
         tool_to_add->deselect();
     }
