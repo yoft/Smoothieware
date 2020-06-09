@@ -35,8 +35,6 @@ class SpindleControl: public Tool {
         virtual void set_i_term(float) {};
         virtual void set_d_term(float) {};
         virtual void report_settings(void) {};
-
-        bool selected;
 };
 
 #endif

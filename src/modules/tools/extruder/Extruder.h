@@ -59,7 +59,6 @@ class Extruder : public Tool {
             uint8_t motor_id:8;
             bool retracted:1;
             bool cancel_zlift_restore:1; // hack to stop a G11 zlift restore from overring an absolute Z setting
-            bool selected:1;
             bool saved_selected:1;
             bool g92e0_detected:1;
         };

@@ -56,6 +56,5 @@ class Laser : public Tool {
             bool ttl_used:1;        // stores whether we have a TTL output
             bool ttl_inverting:1;   // stores whether the TTL output should be inverted
             bool manual_fire:1;     // set when manually firing
-            bool selected:1;
         };
 };

@@ -152,6 +152,7 @@ void ToolManager::add_tool(Tool* tool_to_add)
         tool_to_add->select();
         //send new_tool_offsets to robot
         THEROBOT->setToolOffset(this->get_active_tool_offset());
+        this->active_tool=0;
     } else {
         tool_to_add->deselect();
     }
@@ -161,21 +162,23 @@ void ToolManager::add_tool(Tool* tool_to_add)
 // Add a tool to the tool list
 void ToolManager::change_tool()
 {
-    // We must wait for an empty queue before we can disable the current tool
-    THEKERNEL->conveyor->wait_for_idle();
-    this->tools[active_tool]->deselect();
+    if ((active_tool!=next_tool) && next_tool>0) {
+        if (active_tool>0) { // Safety check
+            // We must wait for an empty queue before we can disable the current tool
+            THEKERNEL->conveyor->wait_for_idle();
+            this->tools[active_tool]->deselect();
+        }
 
-    THEKERNEL->conveyor->wait_for_idle();
-    this->active_tool = this->next_tool;
+        THEKERNEL->conveyor->wait_for_idle();
+        this->active_tool = this->next_tool;
 
-    //send new_tool_offsets to robot
-    THEROBOT->setToolOffset(this->get_active_tool_offset());
-    //THEROBOT->actuators[0] = (this->tools[active_tool]->get_x_axis_stepper()!=NULL)?this->tools[active_tool]->get_x_axis_stepper():this->get_default_x_stepper();
+        //send new_tool_offsets to robot
+        THEROBOT->setToolOffset(this->get_active_tool_offset());
+        //THEROBOT->actuators[0] = (this->tools[active_tool]->get_x_axis_stepper()!=NULL)?this->tools[active_tool]->get_x_axis_stepper():this->get_default_x_stepper();
 
-    this->tools[active_tool]->select();
-    THEKERNEL->conveyor->wait_for_idle();
-
-
+        this->tools[active_tool]->select();
+        THEKERNEL->conveyor->wait_for_idle();
+    }
 }
 
 
