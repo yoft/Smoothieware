@@ -28,18 +28,17 @@
 
 ToolManager::ToolManager()
 {
-    active_tool = -1;
-    next_tool = -1;
+    active_tool = 0;
+    next_tool = 0;
     current_tool_name=0;
 }
 
 uint16_t *ToolManager::get_active_tool_name() {
-    current_tool_name=this->tools[active_tool]->get_name();
     return &current_tool_name;
 }
 
 const float *ToolManager::get_active_tool_offset() {
-    return this->tools[active_tool]->get_offset();
+    return this->tools[active_tool-1]->get_offset();
 }
 
 void ToolManager::on_module_loaded()
@@ -57,7 +56,7 @@ void ToolManager::on_gcode_received(void *argument)
 
     if( gcode->has_letter('T') ) {
         int new_tool = gcode->get_value('T');
-        if(new_tool >= (int)this->tools.size() || new_tool < 0) {
+        if(new_tool <= 0 || new_tool > (int)this->tools.size()) {
             // invalid tool
             char buf[32]; // should be big enough for any status
             int n = snprintf(buf, sizeof(buf), "T%d invalid tool ", new_tool);
@@ -68,13 +67,13 @@ void ToolManager::on_gcode_received(void *argument)
         }
     }
     if (gcode->has_m && gcode->m==6) {
-        if(this->next_tool >= (int)this->tools.size() || this->next_tool < 0) {
+        if(this->next_tool <= 0 || this->next_tool > (int)this->tools.size()) {
             // invalid tool
             char buf[32]; // should be big enough for any status
             int n = snprintf(buf, sizeof(buf), "T%d invalid tool ", this->next_tool);
             gcode->txt_after_ok.append(buf, n);
 
-        }else if (this->next_tool != this->active_tool) {
+        } else {
             this->change_tool();
         }
     }
@@ -148,24 +147,23 @@ void ToolManager::on_set_public_data(void* argument)
 // Add a tool to the tool list
 void ToolManager::add_tool(Tool* tool_to_add)
 {
-    if(this->tools.size() == 0) {
-        tool_to_add->select();
-        //send new_tool_offsets to robot
-//        THEROBOT->setToolOffset(this->get_active_tool_offset());
+    this->tools.push_back( tool_to_add );
+    if(this->tools.size() == 1) {
+        this->next_tool=1;
+        this->change_tool();
     } else {
         tool_to_add->deselect();
     }
-    this->tools.push_back( tool_to_add );
 }
 
-// Add a tool to the tool list
+// Change the current tool to the next tool
 void ToolManager::change_tool()
 {
     if ((active_tool!=next_tool) && next_tool>0) {
-        if (active_tool>0) { // Safety check
+        if (active_tool>0) { // Safety check for first tool
             // We must wait for an empty queue before we can disable the current tool
             THEKERNEL->conveyor->wait_for_idle();
-            this->tools[active_tool]->deselect();
+            this->tools[active_tool-1]->deselect();
         }
 
         THEKERNEL->conveyor->wait_for_idle();
@@ -173,9 +171,10 @@ void ToolManager::change_tool()
 
         //send new_tool_offsets to robot
         THEROBOT->setToolOffset(this->get_active_tool_offset());
+        this->current_tool_name = this->tools[active_tool-1]->get_name();
         //THEROBOT->actuators[0] = (this->tools[active_tool]->get_x_axis_stepper()!=NULL)?this->tools[active_tool]->get_x_axis_stepper():this->get_default_x_stepper();
 
-        this->tools[active_tool]->select();
+        this->tools[active_tool-1]->select();
         THEKERNEL->conveyor->wait_for_idle();
     }
 }
