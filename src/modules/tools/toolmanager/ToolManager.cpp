@@ -31,6 +31,7 @@ ToolManager::ToolManager()
     active_tool = 0;
     next_tool = 0;
     current_tool_name=0;
+    default_x_stepper=THEROBOT->actuators[ALPHA_STEPPER];
 }
 
 uint16_t *ToolManager::get_active_tool_name() {
