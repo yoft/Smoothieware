@@ -98,7 +98,7 @@ void ToolManager::on_console_line_received( void *argument )
     if (cmd == "tools") {
         msgp->stream->printf("%d tools defined:\n", (int)this->tools.size());
         for(int i=0;i<(int)this->tools.size();i++) {
-            msgp->stream->printf("%d: %d%s\n",i, this->tools[i]->get_name(),(i==this->active_tool)?"*":"");
+            msgp->stream->printf("%d: %d%s\n",i, this->tools[i]->get_name(),(i+1==this->active_tool)?"*":"");
         }
     }
 }
