@@ -97,7 +97,7 @@ void Laser::on_module_loaded()
     if (axis_num>ALPHA_STEPPER && axis_num<=GAMMA_STEPPER) {
         THEKERNEL->streams->printf("Error: Laser cannot use axis %d to replace X axis! Must be >%d. Using default X stepper motor\n", axis_num, GAMMA_STEPPER);
     }else{
-        x_stepper=axis_num;
+        this->set_x_axis_stepper(axis_num);
     }
 
     uint32_t period = THEKERNEL->config->value(laser_module_pwm_period_checksum)->by_default(20)->as_number();
