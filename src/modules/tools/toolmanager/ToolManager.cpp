@@ -164,6 +164,10 @@ void ToolManager::change_tool()
             // We must wait for an empty queue before we can disable the current tool
             THEKERNEL->conveyor->wait_for_idle();
             this->tools[active_tool-1]->deselect();
+
+            // Move x-stepper to 0 pos
+            Gcode gc1("G53 G0 X0", &StreamOutput::NullStream);
+            THEKERNEL->call_event(ON_GCODE_RECEIVED, &gc1);
         }
 
         THEKERNEL->conveyor->wait_for_idle();
@@ -172,7 +176,10 @@ void ToolManager::change_tool()
         //send new_tool_offsets to robot
         THEROBOT->setToolOffset(this->get_active_tool_offset());
         this->current_tool_name = this->tools[active_tool-1]->get_name();
-        //THEROBOT->actuators[0] = (this->tools[active_tool]->get_x_axis_stepper()!=NULL)?this->tools[active_tool]->get_x_axis_stepper():this->get_default_x_stepper();
+
+
+        // Change to the new stepper
+        THEROBOT->actuators[X_AXIS] = (this->tools[active_tool]->get_x_axis_stepper()!=NULL)?this->tools[active_tool]->get_x_axis_stepper():this->get_default_x_stepper();
 
         this->tools[active_tool-1]->select();
         THEKERNEL->conveyor->wait_for_idle();
