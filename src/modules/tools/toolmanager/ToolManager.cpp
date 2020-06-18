@@ -148,12 +148,12 @@ void ToolManager::on_set_public_data(void* argument)
 void ToolManager::add_tool(Tool* tool_to_add)
 {
     this->tools.push_back( tool_to_add );
-    if(this->tools.size() == 1) {
-        this->next_tool=1;
-        this->change_tool();
-    } else {
+//    if(this->tools.size() == 1) {
+//        this->next_tool=1;
+//        this->change_tool();
+//    } else {
         tool_to_add->deselect();
-    }
+//    }
 }
 
 // Change the current tool to the next tool
