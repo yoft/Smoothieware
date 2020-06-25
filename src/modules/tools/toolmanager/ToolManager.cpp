@@ -19,6 +19,7 @@
 #include "PublicData.h"
 #include "Gcode.h"
 #include "utils.h"
+#include "StepTicker.h"
 
 #include "libs/SerialMessage.h"
 #include "libs/StreamOutput.h"
@@ -34,12 +35,29 @@ ToolManager::ToolManager()
     default_x_stepper=THEROBOT->actuators[ALPHA_STEPPER];
 }
 
-uint16_t *ToolManager::get_active_tool_name() {
+uint16_t *ToolManager::get_active_tool_name()
+{
     return &current_tool_name;
 }
 
-const float *ToolManager::get_active_tool_offset() {
+const float *ToolManager::get_active_tool_offset()
+{
     return this->tools[active_tool-1]->get_offset();
+}
+
+const float *ToolManager::get_tool_offset(unsigned int tool)
+{
+    if (tool==0 || tool > this->tools.size()) return NULL;
+    return this->tools[tool-1]->get_offset();
+}
+
+void ToolManager::set_tool_offset(unsigned int tool, float offset[3])
+{
+    if ( tool==0 || tool > this->tools.size() ) return;
+    this->tools[tool-1]->set_offset(offset);
+    if ( tool == this->active_tool ) {
+        THEROBOT->setToolOffset( this->get_active_tool_offset() );
+    }
 }
 
 void ToolManager::on_module_loaded()
@@ -60,7 +78,7 @@ void ToolManager::on_gcode_received(void *argument)
         if(new_tool <= 0 || new_tool > (int)this->tools.size()) {
             // invalid tool
             char buf[32]; // should be big enough for any status
-            int n = snprintf(buf, sizeof(buf), "T%d invalid tool ", new_tool);
+            int n = snprintf(buf, sizeof(buf), "- T%d invalid tool ", new_tool);
             gcode->txt_after_ok.append(buf, n);
 
         } else {
@@ -68,10 +86,10 @@ void ToolManager::on_gcode_received(void *argument)
         }
     }
     if (gcode->has_m && gcode->m==6) {
-        if(this->next_tool <= 0 || this->next_tool > (int)this->tools.size()) {
+        if(this->next_tool <= 0 || this->next_tool > this->tools.size()) {
             // invalid tool
             char buf[32]; // should be big enough for any status
-            int n = snprintf(buf, sizeof(buf), "T%d invalid tool ", this->next_tool);
+            int n = snprintf(buf, sizeof(buf), "- T%d invalid tool ", this->next_tool);
             gcode->txt_after_ok.append(buf, n);
 
         } else {
@@ -97,8 +115,8 @@ void ToolManager::on_console_line_received( void *argument )
     // Act depending on command
     if (cmd == "tools") {
         msgp->stream->printf("%d tools defined:\n", (int)this->tools.size());
-        for(int i=0;i<(int)this->tools.size();i++) {
-            msgp->stream->printf("%d: %d%s\n",i, this->tools[i]->get_name(),(i+1==this->active_tool)?"*":"");
+        for(unsigned int i=0;i<this->tools.size();i++) {
+            msgp->stream->printf("%d: %d%s\n",i+1, this->tools[i]->get_name(),(i+1==this->active_tool)?"*":"");
         }
     }
 }
@@ -167,8 +185,12 @@ void ToolManager::change_tool()
             this->tools[active_tool-1]->deselect();
 
             // Move x-stepper to 0 pos
-            Gcode gc1("G53 G0 X0", &StreamOutput::NullStream);
+            THEROBOT->push_state();
+            THEROBOT->next_command_is_MCS=true;
+            THEROBOT->absolute_mode=true;
+            Gcode gc1("G0 X0", &StreamOutput::NullStream);
             THEKERNEL->call_event(ON_GCODE_RECEIVED, &gc1);
+            THEROBOT->pop_state();
         }
 
         THEKERNEL->conveyor->wait_for_idle();
@@ -180,7 +202,19 @@ void ToolManager::change_tool()
 
 
         // Change to the new stepper
-        THEROBOT->actuators[X_AXIS] = (this->tools[active_tool]->get_x_axis_stepper()!=NULL)?this->tools[active_tool]->get_x_axis_stepper():this->get_default_x_stepper();
+        if (this->tools.at(active_tool-1)->get_x_axis_stepper() == NULL) {
+            THEROBOT->actuators.at(ALPHA_STEPPER) = this->get_default_x_stepper();
+            THEKERNEL->step_ticker->motor[ALPHA_STEPPER] = this->get_default_x_stepper();
+        }else{
+            THEROBOT->actuators.at(ALPHA_STEPPER) = this->tools.at(active_tool-1)->get_x_axis_stepper();
+            THEKERNEL->step_ticker->motor[ALPHA_STEPPER] = this->tools.at(active_tool-1)->get_x_axis_stepper();
+        }
+//        THEROBOT->plane_axis_0 = this->tools.at(active_tool-1)->get_x_axis();
+
+//        THEROBOT->actuators[ALPHA_STEPPER] = (this->tools[active_tool-1]->get_x_axis_stepper()!=NULL)?this->tools[active_tool-1]->get_x_axis_stepper():this->get_default_x_stepper();
+//        THEROBOT->actuators.erase(THEROBOT->actuators.begin());
+//        THEROBOT->actuators.insert(THEROBOT->actuators.begin(), (this->tools.at(active_tool-1)->get_x_axis_stepper()!=NULL)?this->tools[active_tool-1]->get_x_axis_stepper():this->get_default_x_stepper());
+
 
         this->tools[active_tool-1]->select();
         THEKERNEL->conveyor->wait_for_idle();
