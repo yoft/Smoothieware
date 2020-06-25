@@ -25,14 +25,17 @@ public:
     virtual void deselect()= 0;
     virtual bool is_selected() { return selected; }
     virtual const float *get_offset() const { return offset; }
+    virtual void set_offset(float new_offset[3]) { memcpy(offset, new_offset, 3*sizeof(float)); }
     virtual uint16_t get_name() const { return identifier; }
     virtual StepperMotor *get_x_axis_stepper() const { return x_stepper; }
-    virtual void set_x_axis_stepper(int axis_stepper_num) { x_stepper=THEROBOT->actuators[axis_stepper_num]; }
+//    virtual unsigned int get_x_axis() const { return x_axis; }
+    virtual void set_x_axis_stepper(unsigned int axis_stepper_num) { x_stepper=THEROBOT->actuators[axis_stepper_num]; }//x_axis=axis_stepper_num; }
 
 protected:
     float offset[3];
     uint16_t identifier;
     bool selected;
     StepperMotor *x_stepper;
+//    unsigned int x_axis;
 };
 
