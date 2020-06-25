@@ -18,6 +18,7 @@
 #include "StreamOutputPool.h"
 #include "nuts_bolts.h"
 #include "ToolManager.h"
+#include "ActuatorCoordinates.h"
 
 #define spindle_checksum                   CHECKSUM("spindle")
 #define enable_checksum                    CHECKSUM("enable")
@@ -60,10 +61,10 @@ void SpindleMaker::load_spindle(){
     // Add the spindle if we successfully initialized one
     if( spindle != NULL) {
 
-        int axis_num=THEKERNEL->config->value(spindle_checksum, spindle_motor_for_x_axis_checksum)->by_default(ALPHA_STEPPER)->as_int();
-        if (axis_num>ALPHA_STEPPER && axis_num<=GAMMA_STEPPER) {
+        int axis_num=THEKERNEL->config->value(spindle_checksum, spindle_motor_for_x_axis_checksum)->by_default(-1)->as_int();
+        if (axis_num==BETA_STEPPER || axis_num==GAMMA_STEPPER || axis_num>=((int)THEROBOT->actuators.size())) {
             THEKERNEL->streams->printf("Error: Spindle cannot use axis %d to replace X axis stepper! Must be >%d. Using default X stepper motor.\n", axis_num, GAMMA_STEPPER);
-        }else{
+        }else if (axis_num>=0 && axis_num<((int)THEROBOT->actuators.size())){
             spindle->set_x_axis_stepper(axis_num);
         }
 
