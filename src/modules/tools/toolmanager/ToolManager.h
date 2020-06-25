@@ -28,16 +28,19 @@ public:
     void on_get_public_data(void *argument);
     void on_set_public_data(void *argument);
     void add_tool(Tool *tool_to_add);
-    int get_active_tool() const { return active_tool; }
+    Tool * get_tool(unsigned int num);
+    void set_tool_offset(unsigned int tool, float offset[3]);
+    const float *get_tool_offset(unsigned int tool);
     StepperMotor *get_default_x_stepper() const { return default_x_stepper; }
+    unsigned int get_tool_count() const { return this->tools.size(); }
 
 private:
     void change_tool();
     vector<Tool *> tools;
     StepperMotor *default_x_stepper;
 
-    int next_tool;
-    int active_tool;
+    unsigned int next_tool;
+    unsigned int active_tool;
     uint16_t current_tool_name;
 };
 
