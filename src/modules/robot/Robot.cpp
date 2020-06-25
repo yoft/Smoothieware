@@ -34,6 +34,7 @@
 #include "GcodeDispatch.h"
 #include "ActuatorCoordinates.h"
 #include "EndstopsPublicAccess.h"
+#include "ToolManager.h"
 
 #include "mbed.h" // for us_ticker_read()
 #include "mri.h"
@@ -542,6 +543,49 @@ void Robot::on_gcode_received(void *argument)
                         }
                         wcs_offsets[n] = wcs_t(x, y, z);
                     }
+                }else if(gcode->has_letter('L') && (gcode->get_int('L') == 1 || gcode->get_int('L') == 10) && gcode->has_letter('P')) {
+                    size_t n = gcode->get_uint('P');
+                    if(n>0 && n <= THEKERNEL->tool_manager->get_tool_count()) {
+                        float offset[3];
+                        memcpy(offset, THEKERNEL->tool_manager->get_tool_offset(n), 3*sizeof(float));
+                        gcode->stream->printf("Previous offset(T%d): %f %f %f\n", n, offset[0], offset[1], offset[2]);
+                        if(gcode->get_int('L') == 10) {
+                            // this makes the current machine position (less compensation transform) the offset
+                            // get current position in WCS
+                            if(gcode->has_letter('X')){
+                                offset[X_AXIS] = to_millimeters(gcode->get_value('X')) - machine_position[X_AXIS] - std::get<X_AXIS>(wcs_offsets[current_wcs]) + std::get<X_AXIS>(g92_offset);
+                            }
+                            if(gcode->has_letter('Y')){
+                                offset[Y_AXIS] = to_millimeters(gcode->get_value('Y')) - machine_position[Y_AXIS] - std::get<Y_AXIS>(wcs_offsets[current_wcs]) + std::get<Y_AXIS>(g92_offset);
+                            }
+                            if(gcode->has_letter('Z')) {
+                                offset[Z_AXIS] = to_millimeters(gcode->get_value('Z')) - machine_position[Z_AXIS] - std::get<Z_AXIS>(wcs_offsets[current_wcs]) + std::get<Z_AXIS>(g92_offset);
+                            }
+
+
+                            gcode->stream->printf("Current coordinates (T%d): [%f, %f, %f]\n", n, offset[0], offset[1], offset[2]);
+                        } else {
+                            if(absolute_mode) {
+                                // the value is the offset from machine zero
+                                if(gcode->has_letter('X')) offset[X_AXIS] = to_millimeters(gcode->get_value('X'));
+                                if(gcode->has_letter('Y')) offset[Y_AXIS] = to_millimeters(gcode->get_value('Y'));
+                                if(gcode->has_letter('Z')) offset[Z_AXIS] = to_millimeters(gcode->get_value('Z'));
+                            }else{
+                                if(gcode->has_letter('X')) offset[X_AXIS] += to_millimeters(gcode->get_value('X'));
+                                if(gcode->has_letter('Y')) offset[Y_AXIS] += to_millimeters(gcode->get_value('Y'));
+                                if(gcode->has_letter('Z')) offset[Z_AXIS] += to_millimeters(gcode->get_value('Z'));
+                            }
+                        }
+//                        wcs_offsets[n] = wcs_t(x, y, z);
+                        gcode->stream->printf("New offset(T%d): %f %f %f\n", n, offset[0], offset[1], offset[2]);
+                        THEKERNEL->tool_manager->set_tool_offset(n, offset);
+                    }else{
+                        gcode->stream->printf("P%d Invalid tool!\n", n);
+                    }
+                }else{
+                    char buf[45]; // should be big enough for any status
+                    int n = snprintf(buf, sizeof(buf), "- wrong syntax G10 L[1|10|2|20] P[TOOL] axis");
+                    gcode->txt_after_ok.append(buf, n);
                 }
                 break;
 
