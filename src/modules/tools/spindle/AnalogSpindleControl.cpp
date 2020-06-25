@@ -25,6 +25,9 @@
 void AnalogSpindleControl::on_module_loaded()
 {
 
+    identifier=spindle_checksum;
+    x_stepper=NULL;
+    offset[0] = offset[1] = offset[2] = 0;
     spindle_on = false;
     target_rpm = 0;
     min_rpm = THEKERNEL->config->value(spindle_checksum, spindle_min_rpm_checksum)->by_default(100)->as_int();
