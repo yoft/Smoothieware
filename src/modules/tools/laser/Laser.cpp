@@ -24,6 +24,8 @@
 #include "PwmOut.h" // mbed.h lib
 #include "PublicDataRequest.h"
 #include "ToolManager.h"
+#include "StepperMotor.h"
+
 
 #include <algorithm>
 
@@ -48,6 +50,11 @@ Laser::Laser()
     scale = 1;
     manual_fire = false;
     fire_duration = 0;
+    identifier=laser_checksum;
+    x_stepper=NULL;
+//    x_axis=0;
+    offset[0] = offset[2] = 0;
+    offset[1] = 120;
 }
 
 void Laser::on_module_loaded()
@@ -57,6 +64,16 @@ void Laser::on_module_loaded()
         delete this;
         return;
     }
+
+    Pin pins[3];
+    pins[0].from_string("2.13")->as_output();
+    pins[1].from_string("0.11")->as_output();
+    pins[2].from_string("2.12")->as_output();
+    x_stepper=new StepperMotor(pins[0],pins[1],pins[2]);
+    x_stepper->change_steps_per_mm(160);
+    x_stepper->set_max_rate(1000/60.0F); // it is in mm/min and converted to mm/sec
+    x_stepper->set_acceleration(NAN); // mm/secs²
+
 
     // Get smoothie-style pin from config
     Pin* dummy_pin = new Pin();
@@ -93,12 +110,12 @@ void Laser::on_module_loaded()
         ttl_pin = NULL;
     }
 
-    int axis_num=THEKERNEL->config->value(laser_module_motor_for_x_axis_checksum)->by_default(ALPHA_STEPPER)->as_int();
-    if (axis_num>ALPHA_STEPPER && axis_num<=GAMMA_STEPPER) {
-        THEKERNEL->streams->printf("Error: Laser cannot use axis %d to replace X axis! Must be >%d. Using default X stepper motor\n", axis_num, GAMMA_STEPPER);
-    }else{
-        this->set_x_axis_stepper(axis_num);
-    }
+//    int axis_num=THEKERNEL->config->value(laser_module_motor_for_x_axis_checksum)->by_default(-1)->as_int();
+//    if (axis_num==BETA_STEPPER || axis_num==GAMMA_STEPPER || axis_num>=((int)THEROBOT->actuators.size())) {
+//        THEKERNEL->streams->printf("Error: Spindle cannot use axis %d to replace X axis stepper! Must be >%d. Using default X stepper motor.\n", axis_num, GAMMA_STEPPER);
+//    }else if (axis_num>=0 && axis_num<(int)THEROBOT->actuators.size()){
+//        this->set_x_axis_stepper(axis_num);
+//    }
 
     uint32_t period = THEKERNEL->config->value(laser_module_pwm_period_checksum)->by_default(20)->as_number();
     this->pwm_pin->period_us(period);
